@@ -1,0 +1,48 @@
+def is_valid(assignment, state, color, adjacency):
+    for neighbor in adjacency[state]:
+        if neighbor in assignment and assignment[neighbor] == color:
+            return False
+    return True
+
+def backtrack(assignment, states, colors, adjacency):
+    if len(assignment) == len(states):
+        return assignment
+
+    unassigned_states = [state for state in states if state not in assignment]
+    current_state = unassigned_states[0]
+
+    for color in colors:
+        if is_valid(assignment, current_state, color, adjacency):
+            assignment[current_state] = color
+            result = backtrack(assignment, states, colors, adjacency)
+            if result:
+                return result
+            assignment.pop(current_state)
+
+    return None
+
+def map_coloring(states, colors, adjacency):
+    assignment = {}
+    return backtrack(assignment, states, colors, adjacency)
+
+# Example usage:
+states = ['WA', 'NT', 'SA', 'Q', 'NSW', 'V', 'T']
+colors = ['Red', 'Green', 'Blue']
+adjacency = {
+    'WA': ['NT', 'SA'],
+    'NT': ['WA', 'SA', 'Q'],
+    'SA': ['WA', 'NT', 'Q', 'NSW', 'V'],
+    'Q': ['NT', 'SA', 'NSW'],
+    'NSW': ['Q', 'SA', 'V'],
+    'V': ['SA', 'NSW'],
+    'T': []
+}
+
+assignment = map_coloring(states, colors, adjacency)
+
+if assignment:
+    print("Solution found:")
+    for state, color in assignment.items():
+        print(f"{state}: {color}")
+else:
+    print("No solution found")
